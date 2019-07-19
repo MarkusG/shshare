@@ -7,7 +7,7 @@ ARGV=("$@")
 finish_screencast() {
 	if [[ $FFMPEG_PID -ne 0 ]]; then
 		kill -15 $FFMPEG_PID
-		sleep .5
+		wait $FFMPEG_PID
 		share ${ARGV[2]} < /tmp/screencast.mp4
 		rm /tmp/screencast.mp4 # TODO allow preserving screenshots/casts
 	fi
