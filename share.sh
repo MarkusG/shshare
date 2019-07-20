@@ -48,12 +48,14 @@ share() {
 			xclip -selection clipboard -target image/png
 			;;
 		"upload")
+			UPLOADER=$CONFIG_DIR/share.sh.d/upload.sh
+			[[ ! -e $CONFIG_FILE ]] && UPLOADER=/etc/share.sh.d/upload.sh
 			case ${ARGV[0]} in
 				"screenshot")
-					$CONFIG_DIR/share.sh.d/upload.sh image
+					$UPLOADER image
 					;;
 				"screencast")
-					$CONFIG_DIR/share.sh.d/upload.sh video
+					$UPLOADER video
 					;;
 			esac
 			;;
