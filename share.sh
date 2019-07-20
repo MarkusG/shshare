@@ -38,6 +38,7 @@ print_usage() {
 }
 
 share() {
+	CONFIG_DIR=$([[ -z $XDG_CONFIG_HOME ]] && echo "$HOME/.config" || echo $XDG_CONFIG_HOME)
 	case $1 in
 		"clipboard")
 			if [[ ${ARGV[0]} != "screenshot" ]]; then
@@ -48,12 +49,11 @@ share() {
 			;;
 		"upload")
 			case ${ARGV[0]} in
-				# TODO call this from users config directory
 				"screenshot")
-					./upload.sh image
+					$CONFIG_DIR/share.sh.d/upload.sh image
 					;;
 				"screencast")
-					./upload.sh video
+					$CONFIG_DIR/share.sh.d/upload.sh video
 					;;
 			esac
 			;;
