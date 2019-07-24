@@ -49,7 +49,7 @@ share() {
 			;;
 		"upload")
 			UPLOADER=$CONFIG_DIR/shshare/uploader.sh
-			[[ ! -e $CONFIG_FILE ]] && UPLOADER=/etc/shshare/uploader.sh
+			[[ ! -e $UPLOADER ]] && UPLOADER=/etc/shshare/uploader.sh
 			case ${ARGV[0]} in
 				"screenshot")
 					$UPLOADER image
