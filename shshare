@@ -7,10 +7,10 @@ print_usage() {
 	printf "\nHelp Options:\n"
 	printf "\t-h\t\t\t\tPrint this help message\n"
 	printf "\\nApplication Options:\n"
-	printf "\t-t, --type\t\t\tCapture type\n"
-	printf "\t-s, --selection\t\t\tSelection type\n"
-	printf "\t-d, --destination\t\tUpload destination\n"
-	printf "\t-w, --wait\t\t\tWait time\n"
+	printf "\t-t, --type TYPE\t\t\tCapture type\n"
+	printf "\t-s, --selection SELECTION\tSelection type\n"
+	printf "\t-d, --destination DESTINATION\tUpload destination\n"
+	printf "\t-w, --wait TIME\t\t\tWait time\n"
 	# TODO move all this to a man page or something
 	printf "\nCapture types:\n"
 	printf "\tscreenshot - a screenshot\n"
@@ -29,7 +29,7 @@ finish_screencast() {
 		kill -15 $FFMPEG_PID
 		wait $FFMPEG_PID
 		share $DESTINATION < /tmp/screencast.mp4
-		rm /tmp/screencast.mp4 # TODO allow preserving screenshots/casts
+		rm /tmp/screencast.mp4
 	fi
 	exit 0
 }
@@ -154,6 +154,7 @@ case $TYPE in
 			-i :0.0+$offset \
 			-pix_fmt yuv420p \
 			/tmp/screencast.mp4 \
+			# TODO next line is still broken even with padding
 			-vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" & # pad regions who's dimensions are not divisible by 2 for x264 encoding
 		FFMPEG_PID=$!
 		wait $FFMPEG_PID # keep alive so we can catch SIGUSR1 when the user wants to stop the recording
