@@ -15,7 +15,7 @@ print_usage() {
 	# TODO move all this to a man page or something
 	printf "\nCapture types:\n"
 	printf "\tscreenshot - a screenshot\n"
-	printf "\tscreencast - a video recording\n" # TODO file
+	printf "\tscreencast - a video recording\n"
 	printf "\nSelections:\n"
 	printf "\tregion - a user-drawn region of the screen\n"
 	printf "\tfocused - the currently focused window\n"
