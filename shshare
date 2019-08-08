@@ -140,8 +140,8 @@ case $TYPE in
 		esac
 		;;
 	"screencast")
-		if [[ $TYPE != "region" ]]; then
-			echo "Unsupported screemcast selection: $TYPE" 1>&2 # if someone wants to record their entire screen they should use OBS anyway
+		if [[ $SELECTION != "region" ]]; then
+			echo "Unsupported screencast selection: $SELECTION" 1>&2 # if someone wants to record their entire screen they should use OBS anyway
 		fi
 		region=$(slop --format="%x,%y %wx%h")
 		size=$(echo $region | cut -d' ' -f 2)
