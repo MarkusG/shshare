@@ -125,7 +125,9 @@ case $TYPE in
 	"screenshot")
 		case $SELECTION in
 			"region")
-				maim --delay $WAIT --select --hidecursor | share $DESTINATION
+				region=$(slop 2>/dev/null)
+				[[ $? -eq 1 ]] && error_exit "Canceled by keystroke or right-click" 4
+				maim --delay $WAIT --geometry $region --hidecursor | share $DESTINATION
 				STATUS=("${PIPESTATUS[@]}")
 				[[ "${STATUS[0]}" -ne 0 ]] && error_exit "Error in maim" 2
 				[[ "${STATUS[1]}" -ne 0 ]] && error_exit "Error in uploader" 2
@@ -148,7 +150,8 @@ case $TYPE in
 		if [[ $SELECTION != "region" ]]; then
 			echo "Unsupported screencast selection: $SELECTION" 1>&2 # if someone wants to record their entire screen they should use OBS anyway
 		fi
-		region=$(slop --format="%x,%y %wx%h")
+		region=$(slop --format="%x,%y %wx%h" 2>/dev/null)
+		[[ $? -eq 1 ]] && error_exit "Canceled by keystroke or right-click" 4
 		size=$(echo $region | cut -d' ' -f 2)
 		offset=$(echo $region | cut -d' ' -f 1)
 		sleep $WAIT
