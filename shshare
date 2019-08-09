@@ -147,13 +147,22 @@ case $TYPE in
 		esac
 		;;
 	"screencast")
-		if [[ $SELECTION != "region" ]]; then
-			echo "Unsupported screencast selection: $SELECTION" 1>&2 # if someone wants to record their entire screen they should use OBS anyway
+		if [[ $SELECTION == "full" ]]; then
+			echo "Unsupported screencast selection: $SELECTION" 1>&2
 		fi
-		region=$(slop --format="%x,%y %wx%h" 2>/dev/null)
-		[[ $? -eq 1 ]] && error_exit "Canceled by keystroke or right-click" 4
-		size=$(echo $region | cut -d' ' -f 2)
-		offset=$(echo $region | cut -d' ' -f 1)
+		case $SELECTION in
+			"region")
+				region=$(slop --format="%x,%y %wx%h" 2>/dev/null)
+				[[ $? -eq 1 ]] && error_exit "Canceled by keystroke or right-click" 4
+				size=$(echo $region | cut -d' ' -f 2)
+				offset=$(echo $region | cut -d' ' -f 1)
+				;;
+			"focused")
+				eval $(xdotool getwindowgeometry --shell $(xdotool getactivewindow))
+				size="${WIDTH}x${HEIGHT}"
+				offset=$"${X},${Y}"
+				;;
+		esac
 		sleep $WAIT
 		ffmpeg \
 			-video_size $size \
