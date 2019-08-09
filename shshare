@@ -31,7 +31,7 @@ trap finish_screencast 10
 
 error_exit() {
 	echo "$(basename $0): ${1:-"Unknown error"}" 1>&2
-	exit 1
+	exit $2
 }
 
 
@@ -40,7 +40,7 @@ share() {
 	case $1 in
 		"clipboard")
 			if [[ $TYPE != "screenshot" ]]; then
-				error_exit "Cannot copy type $TYPE to clipboard"
+				error_exit "Cannot copy type $TYPE to clipboard" 1
 			fi
 			xclip -selection clipboard -target image/png
 			;;
@@ -49,18 +49,18 @@ share() {
 			[[ ! -e $UPLOADER ]] && UPLOADER=/etc/shshare/uploader.sh
 			case $TYPE in
 				"screenshot")
-					$UPLOADER image
+					$UPLOADER image || error_exit "Error in uploader" 2
 					;;
 				"screencast")
-					$UPLOADER video
+					$UPLOADER video || error_exit "Error in uploader" 2
 					;;
 			esac
 			;;
 		*)
 			if [[ -n $1 ]]; then
-				error_exit "Invalid destination"
+				error_exit "Invalid destination" 1
 			else
-				error_exit "No destination provided"
+				error_exit "No destination provided" 1
 			fi
 			;;
 	esac
@@ -117,7 +117,7 @@ done
 set -- $"{POSITIONAL[@]}"
 
 if [[ !($WAIT =~ ^-?\.?[0-9]+$) ]]; then
-	error_exit "Invalid delay: $WAIT"
+	error_exit "Invalid delay: $WAIT" 1
 fi
 	
 
@@ -126,12 +126,21 @@ case $TYPE in
 		case $SELECTION in
 			"region")
 				maim --delay $WAIT --select --hidecursor | share $DESTINATION
+				STATUS=("${PIPESTATUS[@]}")
+				[[ "${STATUS[0]}" -ne 0 ]] && error_exit "Error in maim" 2
+				[[ "${STATUS[1]}" -ne 0 ]] && error_exit "Error in uploader" 2
 				;;
 			"focused")
 				maim --delay $WAIT --window=$(xdotool getactivewindow) --hidecursor | share $DESTINATION
+				STATUS=("${PIPESTATUS[@]}")
+				[[ "${STATUS[0]}" -ne 0 ]] && error_exit "Error in maim" 2
+				[[ "${STATUS[1]}" -ne 0 ]] && error_exit "Error in uploader" 2
 				;;
 			"full")
 				maim --delay $WAIT | share $DESTINATION
+				STATUS=("${PIPESTATUS[@]}")
+				[[ "${STATUS[0]}" -ne 0 ]] && error_exit "Error in maim" 2
+				[[ "${STATUS[1]}" -ne 0 ]] && error_exit "Error in uploader" 2
 				;;
 		esac
 		;;

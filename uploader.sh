@@ -1,5 +1,10 @@
 #!/bin/bash
 
+error_exit() {
+	echo "$(basename $0): ${1:-"Unknown error"}" 1>&2
+	exit $2
+}
+
 case $1 in
 	"image")
 		response=$(curl \
@@ -9,8 +14,8 @@ case $1 in
 		success=$(echo $response | jq '.success')
 
 		if [[ $success != "true" ]]; then
-			echo "Imgur returned unsuccessful response:" >&2
 			echo $response >&2
+			error_exit "Imgur returned unsuccessful response" 1
 		fi
 
 		echo $response | jq --raw-output '.data.link' | xsel --clipboard
@@ -22,21 +27,18 @@ case $1 in
 			--form 'video=@-')
 		success=$(echo $response | jq '.success')
 
-		echo $response
-
 		if [[ $success != "true" ]]; then
-			echo "Imgur returned unsuccessful response:" >&2
 			echo $response >&2
+			error_exit "Imgur returned unsuccessful response" 1
 		fi
 
 		echo $response | jq --raw-output '.data.link' | xsel --clipboard
 		;;
-	"file")
+	"file") # TODO remove this in more appropriate branch
 		curl https://0x0.st --form 'file=@-' | xsel --clipboard
 		;;
 	*)
-		echo "Invalid type: $1" 2>&1
-		exit 1
+		error_exit "Invalid type: $1" 1
 		;;
 esac
 
