@@ -39,4 +39,4 @@ case $1 in
 		;;
 esac
 
-notify-send -t 1000 'Uploaded.' -i '/usr/share/icons/Arc/apps/symbolic/applets-screenshooter-symbolic.svg'
+notify-send -t 1000 'shshare: Uploaded.'
