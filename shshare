@@ -2,16 +2,17 @@
 # share screenshots or screencasts of the entire screen, a window, or a region
 
 print_usage() {
-	printf "Usage:\n"
-	printf "\t$(basename $0) [OPTION]...\n"
-	printf "\nHelp Options:\n"
-	printf "\t-h\t\t\t\tPrint this help message\n"
-	printf "\\nApplication Options:\n"
-	printf "\t-t, --type TYPE\t\t\tCapture type\n"
-	printf "\t-s, --selection SELECTION\tSelection type\n"
-	printf "\t-d, --destination DESTINATION\tUpload destination\n"
-	printf "\t-w, --wait TIME\t\t\tWait time\n"
-	printf "\t    --stop-screencast\t\tStop the currently recording screencast\n"
+	printf "Usage:\n" 1>&2
+	printf "\t$(basename $0) [OPTION]...\n" 1>&2
+	printf "\nHelp Options:\n" 1>&2
+	printf "\t-h\t\t\t\tPrint this help message\n" 1>&2
+	printf "\\nApplication Options:\n" 1>&2
+	printf "\t-t, --type TYPE\t\t\tCapture type\n" 1>&2
+	printf "\t-s, --selection SELECTION\tSelection type\n" 1>&2
+	printf "\t-d, --destination DESTINATION\tUpload destination\n" 1>&2
+	printf "\t-w, --wait TIME\t\t\tWait time\n" 1>&2
+	printf "\t    --stop-screencast\t\tStop the currently recording screencast\n" 1>&2
+	printf "\nSee shshare(1) for more information\n" 1>&2
 }
 
 finish_screencast() {
@@ -30,6 +31,7 @@ trap finish_screencast 10
 
 error_exit() {
 	echo "$(basename $0): ${1:-"Unknown error"}" 1>&2
+	exit 1
 }
 
 
@@ -38,8 +40,7 @@ share() {
 	case $1 in
 		"clipboard")
 			if [[ $TYPE != "screenshot" ]]; then
-				echo "Cannot copy type $TYPE to clipboard" >&2
-				exit 1
+				error_exit "Cannot copy type $TYPE to clipboard"
 			fi
 			xclip -selection clipboard -target image/png
 			;;
@@ -102,7 +103,7 @@ do
 			;;
 		--stop-screencast)
 			killall -10 $(basename $0)
-			exit
+			exit 0
 			;;
 		-h|--help)
 			print_usage
@@ -116,8 +117,7 @@ done
 set -- $"{POSITIONAL[@]}"
 
 if [[ !($WAIT =~ ^-?\.?[0-9]+$) ]]; then
-	echo "Invalid delay: $WAIT"
-	exit 1
+	error_exit "Invalid delay: $WAIT"
 fi
 	
 
