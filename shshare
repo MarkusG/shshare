@@ -3,7 +3,7 @@
 
 print_usage() {
 	printf "Usage:\n"
-	printf "\t$(basename $0) [OPTION]...\n" # TODO this is probably the wrong syntax
+	printf "\t$(basename $0) [OPTION]...\n"
 	printf "\nHelp Options:\n"
 	printf "\t-h\t\t\t\tPrint this help message\n"
 	printf "\\nApplication Options:\n"
@@ -12,17 +12,6 @@ print_usage() {
 	printf "\t-d, --destination DESTINATION\tUpload destination\n"
 	printf "\t-w, --wait TIME\t\t\tWait time\n"
 	printf "\t    --stop-screencast\t\tStop the currently recording screencast\n"
-	# TODO move all this to a man page or something
-	printf "\nCapture types:\n"
-	printf "\tscreenshot - a screenshot\n"
-	printf "\tscreencast - a video recording\n"
-	printf "\nSelections:\n"
-	printf "\tregion - a user-drawn region of the screen\n"
-	printf "\tfocused - the currently focused window\n"
-	printf "\tfull - the entire screen\n"
-	printf "\nDestinations:\n"
-	printf "\tclipboard - copy to the clipboard\n"
-	printf "\tupload - upload using the uploader script\n"
 }
 
 finish_screencast() {
