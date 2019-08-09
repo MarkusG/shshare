@@ -1,0 +1,45 @@
+.TH shshare 1 "2019-08-08" "shshare 0.1.4" "User Commands"
+.SH NAME
+shshare \- a screenshotter, recorder, and uploader
+.SH SYNOPSIS
+\fBshshare\fR
+\fB-t\fR|\fB--type\fR \fItype\fR
+\fB-s\fR|\fB--selection\fR \fIselection\fR
+\fB-d\fR|\fB--destination\fR \fIdestination\fR
+
+\fBshshare\fR
+\fB--stop-screencast\fR
+.SH DESCRIPTION
+.P
+\fBshshare\fR is a tool to capture screenshots and screen recordings, as well as upload them to a user-defined destination. It takes no input from STDIN, and produces error output on STDERR.
+.P
+\fBuploader.sh\fR is found in \fB/etc/shshare\fR by default, but can be copied to \fB$XDG_CONFIG_HOME/shshare/\fR or \fB~/.config/shshare\fR and modified to the user's preference. By default, \fBuploader.sh\fR will upload both screenshots and screencasts to imgur and copy the URL to the X11 clipboard. \fBuploader.sh\fR is called by \fBshshare\fR with either the argument \fBimage\fR or \fBvideo\fR. Therefore, a user-defined uploader script should handle input based on that argument.
+.SH OPTIONS
+.TP
+\fB\-t\fR, \fB\-\-type\fR \fI\,type\/\fR
+The type of capture: \fBscreenshot\fR, an image, or \fBscreencast\fR, a video recording
+.TP
+\fB\-s\fR, \fB\-\-selection\fR \fI\,selection\/\fR
+The selection of the screen to capture: \fBregion\fR, a user-defined region, \fBfocused\fR, the currently focused window, or \fBfull\fR, the entire screen
+.TP
+\fB\-d\fR, \fB\-\-destination\fR \fI\,destination\/\fR
+The ultimate destination of the capture. \fBclipboard\fR, the X11 clipboard, or \fBupload\fR, the uploader script
+.SH EXIT STATUS
+.TP
+0\tSuccess
+.TP
+1\tFailure
+.SH FILES
+.TP
+\fB/etc/shshare/uploader.sh\fR
+The uploader script used to upload captures to the internet. This file can be copied to \fB$XDG_CONFIG_HOME/shshare/\fR or \fB~/.config/shshare\fR and modified to the user's preference.
+.SH ENVIRONMENT
+.TP
+\fBXDG_CONFIG_HOME\fR
+Checked by \fBshshare\fR for a user-defined uploader script before falling back to \fB/etc/shshare/uploader.sh\fR
+.SH NOTES
+Calling \fBshshare\fR with the \fBscreencast\fR type will begin recording a screencast to \fB/tmp/screencast.mp4\fR. This screencast will record indefinitely until \fBshshare\fR receives SIGUSR1, at which point it will terminate the recording, pipe the file to \fBuploader.sh\fR, and delete the file. \fBshshare --stop-screencast\fR simply sends SIGUSR1 to all currently running instances of \fBshshare\fR.
+.SH EXAMPLE
+.TP
+To take a screenshot of a user-defined region and upload it using the uploader script
+\fBshshare --type screenshot --selection region --destination upload\fR
