@@ -34,9 +34,6 @@ case $1 in
 
 		echo $response | jq --raw-output '.data.link' | xsel --clipboard
 		;;
-	"file") # TODO remove this in more appropriate branch
-		curl https://0x0.st --form 'file=@-' | xsel --clipboard
-		;;
 	*)
 		error_exit "Invalid type: $1" 1
 		;;
