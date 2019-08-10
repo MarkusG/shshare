@@ -3,7 +3,7 @@
 
 print_usage() {
 	printf "Usage:\n" 1>&2
-	printf "\t$(basename $0) [OPTION]...\n" 1>&2
+	printf "\t%s [OPTION]...\n" "$(basename "$0")" 1>&2
 	printf "\nHelp Options:\n" 1>&2
 	printf "\t-h\t\t\t\tPrint this help message\n" 1>&2
 	printf "\\nApplication Options:\n" 1>&2
@@ -16,27 +16,27 @@ print_usage() {
 }
 
 finish_screencast() {
-	if [[ $FFMPEG_PID -eq 0 ]]; then
+	if [[ "$FFMPEG_PID" -eq 0 ]]; then
 		exit 0
 	fi
 
-	kill -15 $FFMPEG_PID
-	wait $FFMPEG_PID
-	share $DESTINATION < /tmp/screencast.mp4
+	kill -15 "$FFMPEG_PID"
+	wait "$FFMPEG_PID"
+	share "$DESTINATION" < /tmp/screencast.mp4
 	rm /tmp/screencast.mp4
 	exit 0
 }
 
-trap finish_screencast 10
+trap finish_screencast SIGUSR1
 
 error_exit() {
-	echo "$(basename $0): ${1:-"Unknown error"}" 1>&2
-	exit $2
+	echo "$(basename $"0"): ${1:-"Unknown error"}" 1>&2
+	exit $"2"
 }
 
 
 share() {
-	CONFIG_DIR=$([[ -z $XDG_CONFIG_HOME ]] && echo "$HOME/.config" || echo $XDG_CONFIG_HOME)
+	CONFIG_DIR=$([[ -z $XDG_CONFIG_HOME ]] && echo "$HOME/.config" || echo "$XDG_CONFIG_HOME")
 	case $1 in
 		"clipboard")
 			if [[ $TYPE != "screenshot" ]]; then
@@ -102,7 +102,7 @@ do
 			shift
 			;;
 		--stop-screencast)
-			killall -10 $(basename $0)
+			killall -10 "$(basename "$0")"
 			exit 0
 			;;
 		-h|--help)
@@ -114,9 +114,9 @@ do
 			;;
 	esac
 done
-set -- $"{POSITIONAL[@]}"
+set -- "${POSITIONAL[@]}"
 
-if [[ !($WAIT =~ ^-?\.?[0-9]+$) ]]; then
+if [[ ! ($WAIT =~ ^-?\.?[0-9]+$) ]]; then
 	error_exit "Invalid delay: $WAIT" 1
 fi
 	
@@ -127,19 +127,19 @@ case $TYPE in
 			"region")
 				region=$(slop 2>/dev/null)
 				[[ $? -eq 1 ]] && error_exit "Canceled by keystroke or right-click" 4
-				maim --delay $WAIT --geometry $region --hidecursor | share $DESTINATION
+				maim --delay "$WAIT" --geometry "$region" --hidecursor | share "$DESTINATION"
 				STATUS=("${PIPESTATUS[@]}")
 				[[ "${STATUS[0]}" -ne 0 ]] && error_exit "Error in maim" 2
 				[[ "${STATUS[1]}" -ne 0 ]] && error_exit "Error in uploader" 2
 				;;
 			"focused")
-				maim --delay $WAIT --window=$(xdotool getactivewindow) --hidecursor | share $DESTINATION
+				maim --delay "$WAIT" --window="$(xdotool getactivewindow)" --hidecursor | share "$DESTINATION"
 				STATUS=("${PIPESTATUS[@]}")
 				[[ "${STATUS[0]}" -ne 0 ]] && error_exit "Error in maim" 2
 				[[ "${STATUS[1]}" -ne 0 ]] && error_exit "Error in uploader" 2
 				;;
 			"full")
-				maim --delay $WAIT | share $DESTINATION
+				maim --delay "$WAIT" | share "$DESTINATION"
 				STATUS=("${PIPESTATUS[@]}")
 				[[ "${STATUS[0]}" -ne 0 ]] && error_exit "Error in maim" 2
 				[[ "${STATUS[1]}" -ne 0 ]] && error_exit "Error in uploader" 2
@@ -154,18 +154,18 @@ case $TYPE in
 			"region")
 				region=$(slop --format="%x,%y %wx%h" 2>/dev/null)
 				[[ $? -eq 1 ]] && error_exit "Canceled by keystroke or right-click" 4
-				size=$(echo $region | cut -d' ' -f 2)
-				offset=$(echo $region | cut -d' ' -f 1)
+				size=$(echo "$region" | cut -d' ' -f 2)
+				offset=$(echo "$region" | cut -d' ' -f 1)
 				;;
 			"focused")
-				eval $(xdotool getwindowgeometry --shell $(xdotool getactivewindow))
+				eval "$(xdotool getwindowgeometry --shell "$(xdotool getactivewindow)")"
 				size="${WIDTH}x${HEIGHT}"
 				offset=$"${X},${Y}"
 				;;
 		esac
-		sleep $WAIT
+		sleep "$WAIT"
 		ffmpeg \
-			-video_size $size \
+			-video_size "$size" \
 			-framerate 60 \
 			-f x11grab \
 			-i :0.0+$offset \
@@ -173,6 +173,6 @@ case $TYPE in
 			-vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" \
 			/tmp/screencast.mp4 &
 		FFMPEG_PID=$!
-		wait $FFMPEG_PID # keep alive so we can catch SIGUSR1 when the user wants to stop the recording
+		wait "$FFMPEG_PID" # keep alive so we can catch SIGUSR1 when the user wants to stop the recording
 		;;
 esac
