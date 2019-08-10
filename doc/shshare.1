@@ -13,7 +13,7 @@ shshare \- a screenshotter, recorder, and uploader
 .P
 \fBshshare\fR is a tool to capture screenshots and screen recordings, as well as upload them to a user-defined destination. It takes no input from STDIN, and produces error output on STDERR.
 .P
-\fBuploader.sh\fR is found in \fB/etc/shshare\fR by default, but can be copied to \fB$XDG_CONFIG_HOME/shshare/\fR or \fB~/.config/shshare\fR and modified to the user's preference. By default, \fBuploader.sh\fR will upload both screenshots and screencasts to imgur and copy the URL to the X11 clipboard. \fBuploader.sh\fR is called by \fBshshare\fR with either the argument \fBimage\fR or \fBvideo\fR. Therefore, a user-defined uploader script should handle input based on that argument.
+\fBuploader.sh\fR is found in \fB/etc/shshare\fR by default, but can be copied to \fB$XDG_CONFIG_HOME/shshare/\fR or \fB~/.config/shshare\fR and modified to the user's preference. By default, \fBuploader.sh\fR will upload both screenshots and screencasts to imgur and copy the URL to the X11 clipboard. \fBuploader.sh\fR is called by \fBshshare\fR with either the argument \fBimage\fR or \fBvideo\fR. Therefore, a user-defined uploader script should handle input based on that argument. Upon upload completion, \fBuploader.sh\fR will notify the user via libnotify's \fBnotify-send\fR command.
 .SH OPTIONS
 .TP
 \fB\-t\fR, \fB\-\-type\fR \fI\,type\/\fR
