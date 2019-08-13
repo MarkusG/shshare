@@ -30,7 +30,7 @@ finish_screencast() {
 trap finish_screencast SIGUSR1
 
 error_exit() {
-	echo "$(basename $"0"): ${1:-"Unknown error"}" 1>&2
+	echo "$(basename "$0"): ${1:-"Unknown error"}" 1>&2
 	exit $"2"
 }
 
